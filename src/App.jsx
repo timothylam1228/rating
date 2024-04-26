@@ -20,13 +20,27 @@ function App() {
 
   const onSubmitPromt = useCallback(async () => {
     //
-    const response = await fetch("", {
+    const data = {
+      prompt: prompt.Prompt,
+      negative_prompt: prompt.NegativePrompt,
+      guidance_scale: prompt.GuidanceScale,
+      language: prompt.Language,
+      seed: prompt.Seed,
+      output_gcs_uri: prompt.OutputGcsUri,
+      add_watermark: prompt.AddWatermark,
+      safety_filter_level: prompt.SafetyFilterLevel,
+      person_generation: prompt.PersonGeneration,
+      aspect_ratio: prompt.AspectRatio,
+    };
+    console.log(data);
+    
+    const response = await fetch("https://essaa-creatolens-cdr-media-service-sit-y7nazd37ga-df.a.run.app/gen-image/v1/prompt", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
         // Add any other headers you need, like authorization headers
       },
-      body: JSON.stringify(prompt),
+      body: data,
     });
 
     console.log(response);
