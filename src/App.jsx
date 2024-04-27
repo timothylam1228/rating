@@ -185,7 +185,7 @@ function App() {
         />
         Chinese
       </div>
-      <div>
+      <div style={{display:'none'}}>
         Persona:
         <input
           type="radio"
@@ -271,14 +271,15 @@ function App() {
               }}
             >
               <img
-                style={{ aspectRatio: "auto", width: "50%" }}
+                style={{ aspectRatio: "auto", maxWidth:'400px' , width:'100%'}}
                 src={imageSource}
                 alt="Generated Image"
               />
             </div>
             <div className="rating-section">
+            Rating:
               {Array.from({ length: 10 }, (_, i) => (
-                <button key={i + 1} onClick={onRate} value={i}>
+                <button style={{padding:15}} key={i + 1} onClick={onRate} value={i}>
                   {i + 1}
                 </button>
               ))}
