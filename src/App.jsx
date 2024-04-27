@@ -35,17 +35,23 @@ function App() {
       aspect_ratio: prompt.AspectRatio,
     };
     console.log("data", data);
-    const response = await fetch(
-      "https://essaa-creatolens-cdr-media-service-sit-y7nazd37ga-df.a.run.app/gen-image/v1/prompt",
-      {
-        method: "POST",
-        body: JSON.stringify(data),
-      }
-    );
+    try {
+      const response = await fetch(
+        "https://essaa-creatolens-cdr-media-service-sit-y7nazd37ga-df.a.run.app/gen-image/v1/prompt",
+        {
+          method: "POST",
+          body: JSON.stringify(data),
+        }
+      );
 
-    const image = await response.json();
-    setImageSource(image.data);
-    setLoading(false);
+      const image = await response.json();
+      setImageSource(image.data);
+
+    } catch (e) {
+      console.log(e);
+    } finally {
+      setLoading(false);
+    }
   }, [prompt]);
 
   const handleChange = (event) => {
@@ -71,7 +77,6 @@ function App() {
       form_data.append(key, result[key]);
     }
 
-
     // upload image to google drive
 
     fetch(import.meta.env.VITE_APP_SCRIPT, {
@@ -82,9 +87,15 @@ function App() {
       .then((data) => {
         console.log("data", data);
       })
-      .catch((error) => console.log("error", error));
-    setLoading(false);
-    // setImageSource("");
+      .catch((error) => console.log("error", error))
+      .finally(() => {
+        setLoading(false);
+      });
+    setImageSource("");
+    setPrompt((prevPrompt) => ({
+      ...prevPrompt,
+      Prompt: "",
+    }));
   };
 
   return (
@@ -98,19 +109,28 @@ function App() {
         flexDirection: "column",
       }}
     >
+      <span>
+        prompt example: You are a [Foodie]. give me a cake image for me to post
+        on instagram
+      </span>
+
       <div style={{ display: "flex" }}>
-        <input
-          style={{ width: "80%", padding: "10px 20px" }}
+        <textarea
+          style={{ width: "100%", padding: "10px 20px" }}
           placeholder="Prompt"
           onChange={handleChange}
           value={prompt.Prompt}
           disabled={loading}
           name="Prompt"
-        ></input>
-        <button disabled={loading} onClick={onSubmitPromt}>
-          submit
-        </button>
+        ></textarea>
       </div>
+      <button
+        style={{ padding: "12px 30px" }}
+        disabled={loading}
+        onClick={onSubmitPromt}
+      >
+        submit
+      </button>
 
       <div>
         Aspect Ratio
@@ -185,7 +205,7 @@ function App() {
         />
         Chinese
       </div>
-      <div style={{display:'none'}}>
+      <div style={{ display: "none" }}>
         Persona:
         <input
           type="radio"
@@ -271,15 +291,24 @@ function App() {
               }}
             >
               <img
-                style={{ aspectRatio: "auto", maxWidth:'400px' , width:'100%'}}
+                style={{
+                  aspectRatio: "auto",
+                  maxWidth: "400px",
+                  width: "100%",
+                }}
                 src={imageSource}
                 alt="Generated Image"
               />
             </div>
             <div className="rating-section">
-            Rating:
+              Rating:
               {Array.from({ length: 10 }, (_, i) => (
-                <button style={{padding:15}} key={i + 1} onClick={onRate} value={i}>
+                <button
+                  style={{ padding: 15 }}
+                  key={i + 1}
+                  onClick={onRate}
+                  value={i}
+                >
                   {i + 1}
                 </button>
               ))}
