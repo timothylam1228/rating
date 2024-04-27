@@ -4,9 +4,10 @@ import "./App.css";
 function App() {
   const [prompt, setPrompt] = useState({
     Prompt: "",
+    Persona: "",
     NegativePrompt: "",
     GuidanceScale: "",
-    Language: "",
+    Language: "en",
     Seed: "",
     OutputGcsUri: "",
     AddWatermark: false,
@@ -16,10 +17,11 @@ function App() {
     Rating: 0,
   });
   const [imageSource, setImageSource] = useState("");
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
 
   const onSubmitPromt = useCallback(async () => {
     //
+    setLoading(true);
     const data = {
       prompt: prompt.Prompt,
       negative_prompt: prompt.NegativePrompt,
@@ -33,17 +35,18 @@ function App() {
       aspect_ratio: prompt.AspectRatio,
     };
     console.log(data);
-    
+
     const response = await fetch("https://essaa-creatolens-cdr-media-service-sit-y7nazd37ga-df.a.run.app/gen-image/v1/prompt", {
       method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        // Add any other headers you need, like authorization headers
-      },
-      body: data,
+      // headers: {
+      //   "Content-Type": "application/json",
+      //   // Add any other headers you need, like authorization headers
+      // },
+      body: JSON.stringify(data),
     });
 
-    console.log(response);
+    const image = await response.json();
+    setImageSource(image.data);
     setLoading(false);
   }, [prompt]);
 
@@ -58,28 +61,37 @@ function App() {
         [name]: newValue,
       }));
     }
-
-    console.log(prompt);
   };
 
   const onRate = async (event) => {
+    setLoading(true);
     const value = event.target.value;
-    const result = { ...prompt, Rating: value };
+    const result = { ...prompt, Rating: value, Image: imageSource };
     var form_data = new FormData();
     for (var key in result) {
       form_data.append(key, result[key]);
     }
+
+    const bodyData = JSON.stringify(result);
+
+
+    // upload image to google drive
+
     fetch(
-      "https://script.google.com/macros/s/AKfycbweCyErGMexO60KyV973J7r73I0nZ_S50EJyzPR_PXmUWt0qVYynTZ5-o3bTOqQoLWK5w/exec",
+      "https://script.google.com/macros/s/AKfycbxEOWTsVsNxb_dm0t56Vm3jaVvatbp3GhKsFhKRkoOru0Di2VVayUS0c3WIDaB3FnhkWw/exec",
       {
         method: "POST",
-        body: form_data,
+        body: bodyData,
       }
     )
       .then((res) => res.json())
       .then((data) => {
         console.log("data", data);
-      });
+      })
+      .catch((error) => console.log("error", error));
+    setLoading(false);
+    setImageSource("");
+
   };
 
   return (
@@ -99,13 +111,12 @@ function App() {
           placeholder="Prompt"
           onChange={handleChange}
           value={prompt.Prompt}
+          disabled={loading}
           name="Prompt"
         ></input>
-        <button onClick={onSubmitPromt}>submit</button>
+        <button disabled={loading} onClick={onSubmitPromt}>submit</button>
       </div>
-      <div>
-        <img src={{ imageSource }} />
-      </div>
+
 
       <div>
         Aspect Ratio
@@ -162,6 +173,81 @@ function App() {
           </label>
         </div>
       </div>
+      <div>
+        Language:
+        <input
+          type="radio"
+          name="Language"
+          value="en"
+          checked={prompt.Language === "en"}
+          onChange={handleChange}
+          placeholder="Language"
+          
+        />
+        English
+        <input
+          type="radio"
+          name="Language"
+          value="cn"
+          checked={prompt.Language === "cn"}
+          onChange={handleChange}
+        />
+        Chinese
+      </div>
+      <div>
+        Persona:
+        <input
+          type="radio"
+          name="Persona"
+          value=""
+          checked={prompt.Persona === ""}
+          defaultChecked
+          onChange={handleChange} />
+        <label>None</label>
+        <input
+          type="radio"
+          name="Persona"
+          value="Foodie"
+          checked={prompt.Persona === "Foodie"}
+          onChange={handleChange} />
+        <label>Foodie</label>
+        <input
+          type="radio"
+          name="Persona"
+          value="Digital Marketer"
+          checked={prompt.Persona === "Digital Marketer"}
+          onChange={handleChange} />
+        <label>Digital Marketer</label>
+
+        <input
+          type="radio"
+          name="Persona"
+          value="Content Manager"
+          checked={prompt.Persona === "Content Manager"}
+          onChange={handleChange} />
+        <label>Content Manager</label>
+        <input
+          type="radio"
+          name="Persona"
+          value="Photographer"
+          checked={prompt.Persona === "Photographer"}
+          onChange={handleChange} />
+        <label>Photographer</label>
+        <input
+          type="radio"
+          name="Persona"
+          value="Content Creator"
+          checked={prompt.Persona === "Content Creator"}
+          onChange={handleChange} />
+        <label>Content Creator</label>
+        <input
+          type="radio"
+          name="Persona"
+          value="Graphic Designer"
+          checked={prompt.Persona === "Graphic Designer"}
+          onChange={handleChange} />
+        <label>Graphic Designer</label>
+      </div>
       <div
         style={{
           width: "100%",
@@ -171,8 +257,11 @@ function App() {
           flexDirection: "column",
         }}
       >
-        {!imageSource && (
+        {imageSource && (
           <>
+            <div style={{ display: "flex", alignItems: 'center', justifyContent: 'center' }}>
+              <img style={{ aspectRatio: 'auto', width: '50%' }} src={imageSource} alt="Generated Image" />
+            </div>
             <div>Rating</div>
             <div>
               <button onClick={onRate} value={1}>
