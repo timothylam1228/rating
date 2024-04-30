@@ -23,7 +23,7 @@ function App() {
   const onSubmitPromt = useCallback(async () => {
     //
     setLoading(true);
-    setImageSource("")
+    setImageSource("");
     const data = {
       prompt: prompt.Prompt,
       negative_prompt: prompt.NegativePrompt,
@@ -112,10 +112,14 @@ function App() {
         flexDirection: "column",
       }}
     >
-      <span>
+      <p>
         prompt example: You are a [Foodie]. give me a cake image for me to post
         on instagram
-      </span>
+      </p>
+      <p>
+        "You are a photographer generate a Photorealism image in Hong Kong for
+        IG story Vertical 16:9"
+      </p>
 
       <div style={{ display: "flex" }}>
         <textarea
