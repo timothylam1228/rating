@@ -117,8 +117,8 @@ function App() {
         on instagram
       </p>
       <p>
-        "You are a photographer generate a Photorealism image in Hong Kong for
-        IG story Vertical 16:9"
+        You are a photographer generate a Photorealism image in Hong Kong for
+        IG story Vertical
       </p>
 
       <div style={{ display: "flex" }}>
