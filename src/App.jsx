@@ -12,16 +12,18 @@ function App() {
     OutputGcsUri: "",
     AddWatermark: false,
     SafetyFilterLevel: "",
-    PersonGeneration: "",
+    PersonGeneration: "dont_allow",
     AspectRatio: "1:1", // Default aspect ratio
     Rating: 0,
   });
   const [imageSource, setImageSource] = useState("");
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(false);
 
   const onSubmitPromt = useCallback(async () => {
     //
     setLoading(true);
+    setImageSource("")
     const data = {
       prompt: prompt.Prompt,
       negative_prompt: prompt.NegativePrompt,
@@ -34,7 +36,6 @@ function App() {
       person_generation: prompt.PersonGeneration,
       aspect_ratio: prompt.AspectRatio,
     };
-    console.log("data", data);
     try {
       const response = await fetch(
         "https://essaa-creatolens-cdr-media-service-sit-y7nazd37ga-df.a.run.app/gen-image/v1/prompt",
@@ -45,8 +46,11 @@ function App() {
       );
 
       const image = await response.json();
-      setImageSource(image.data);
-
+      console.log("image", image.data.message);
+      setImageSource(image.data.message);
+      if (image.data.traceback) {
+        setError(image.data.traceback);
+      }
     } catch (e) {
       console.log(e);
     } finally {
@@ -91,7 +95,6 @@ function App() {
       .finally(() => {
         setLoading(false);
       });
-    setImageSource("");
     setPrompt((prevPrompt) => ({
       ...prevPrompt,
       Prompt: "",
@@ -307,7 +310,7 @@ function App() {
                   style={{ padding: 15 }}
                   key={i + 1}
                   onClick={onRate}
-                  value={i}
+                  value={i + 1}
                 >
                   {i + 1}
                 </button>
@@ -315,6 +318,7 @@ function App() {
             </div>
           </div>
         )}
+        {error && <span style={{ color: "red" }}>{error}</span>}
       </div>
     </div>
   );
