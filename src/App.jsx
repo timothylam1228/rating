@@ -46,8 +46,8 @@ function App() {
       );
 
       const image = await response.json();
-      console.log("image", image.data.message);
-      setImageSource(image.data.message);
+      console.log("image", image)
+      setImageSource(image.data);
       if (image.data.traceback) {
         setError(image.data.traceback);
       }
@@ -117,11 +117,10 @@ function App() {
         on instagram
       </p>
       <p>
-        You are a photographer generate a Photorealism image in Hong Kong for
-        IG story Vertical
+        You are a content creator, generate a Photorealism image in Hong Kong for IG story Vertical
       </p>
 
-      <div style={{ display: "flex" }}>
+      <div style={{ display: "flex", width: '100%', margin: '3rem 0' }}>
         <textarea
           style={{ width: "100%", padding: "10px 20px" }}
           placeholder="Prompt"
