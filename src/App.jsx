@@ -26,14 +26,14 @@ function App() {
     setImageSource("");
     const data = {
       prompt: prompt.Prompt,
-      negative_prompt: prompt.NegativePrompt,
-      guidance_scale: prompt.GuidanceScale,
+      // negative_prompt: prompt.NegativePrompt,
+      // guidance_scale: prompt.GuidanceScale,
       language: prompt.Language,
-      seed: prompt.Seed,
-      output_gcs_uri: prompt.OutputGcsUri,
-      add_watermark: prompt.AddWatermark,
-      safety_filter_level: prompt.SafetyFilterLevel,
-      person_generation: prompt.PersonGeneration,
+      // seed: prompt.Seed,
+      // output_gcs_uri: prompt.OutputGcsUri,
+      // add_watermark: prompt.AddWatermark,
+      // safety_filter_level: prompt.SafetyFilterLevel,
+      // person_generation: prompt.PersonGeneration,
       aspect_ratio: prompt.AspectRatio,
     };
     try {
